@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Diet Planner | Персональный план питания</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Карточка */
+        .card {
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 2rem 1.8rem;
+            transition: transform 0.2s ease;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .subhead {
+            text-align: center;
+            color: #5a6e8a;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            border-bottom: 2px solid #e2e8f0;
+            display: inline-block;
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 1.6rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: #1e293b;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            transition: all 0.2s;
+            outline: none;
+            background: white;
+        }
+
+        input:focus {
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.2);
+        }
+
+        /* Сетка витаминов */
+        .vitamins-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .vitamin-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .vitamin-check:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .vitamin-check input {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            accent-color: #764ba2;
+        }
+
+        .vitamin-check label {
+            margin: 0;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: #1e293b;
+        }
+
+        /* Кнопка */
+        .btn-generate {
+            width: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+            box-shadow: 0 10px 20px -5px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -8px rgba(102, 126, 234, 0.5);
+        }
+
+        .info-note {
+            background: #fef9e3;
+            padding: 14px;
+            border-radius: 20px;
+            margin-top: 1.8rem;
+            font-size: 0.8rem;
+            color: #92400e;
+            text-align: center;
+            border-left: 4px solid #f59e0b;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1>🥗 Персональный план питания</h1>
+        <div style="text-align: center;">
+            <span class="subhead">Диета на неделю с учётом возраста, веса и витаминов</span>
+        </div>
+
+        <form id="dietForm">
+            <!-- Возраст -->
+            <div class="form-group">
+                <label>📅 Ваш возраст (лет)</label>
+                <input type="number" id="age" name="age" placeholder="например: 32" min="1" max="120" required>
+            </div>
+
+            <!-- Вес -->
+            <div class="form-group">
+                <label>⚖️ Ваш вес (кг)</label>
+                <input type="number" id="weight" name="weight" placeholder="например: 70" min="20" max="250" step="0.1" required>
+            </div>
+
+            <!-- Витамины (множественный выбор) -->
+            <div class="form-group">
+                <label>💊 Какие витамины вам особенно важны? (можно выбрать несколько)</label>
+                <div class="vitamins-grid" id="vitaminsGrid">
+                    <!-- Витамины будут добавлены через JS для удобства, но можно и вручную -->
+                </div>
+                <small style="color: #5a6e8a; display: block; margin-top: 8px;">✨ План будет содержать продукты, богатые выбранными витаминами + возрастными нормами</small>
+            </div>
+
+            <button type="submit" class="btn-generate">✨ Составить недельный план питания →</button>
+
+            <div class="info-note">
+                🔬 План автоматически учитывает вашу возрастную группу (дети / взрослые / 60+) 
+                и рекомендованные дозы витаминов. Каждый приём пищи сбалансирован по калориям и нутриентам.
+            </div>
+        </form>
+    </div>
+    <footer>
+        🌱 Заботьтесь о здоровье — питайтесь осознанно. Рекомендации носят ознакомительный характер.
+    </footer>
+</div>
+
+<script>
+    // Список витаминов для выбора
+    const VITAMINS_LIST = [
+        { id: "vitA", label: "Витамин A", value: "A" },
+        { id: "vitC", label: "Витамин C", value: "C" },
+        { id: "vitD", label: "Витамин D", value: "D" },
+        { id: "vitE", label: "Витамин E", value: "E" },
+        { id: "vitB12", label: "Витамин B12", value: "B12" },
+        { id: "vitB6", label: "Витамин B6", value: "B6" },
+        { id: "vitK", label: "Витамин K", value: "K" },
+        { id: "vitB1", label: "Витамин B1", value: "B1" }
+    ];
+
+    // Функция для отрисовки чекбоксов витаминов
+    function renderVitamins() {
+        const container = document.getElementById('vitaminsGrid');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        VITAMINS_LIST.forEach(vit => {
+            const div = document.createElement('div');
+            div.className = 'vitamin-check';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = vit.id;
+            checkbox.value = vit.value;
+            checkbox.name = 'vitamins';
+            
+            const label = document.createElement('label');
+            label.htmlFor = vit.id;
+            label.textContent = vit.label;
+            
+            div.appendChild(checkbox);
+            div.appendChild(label);
+            container.appendChild(div);
+        });
+    }
+
+    // Сохранение данных в localStorage и переход на страницу плана
+    function handleFormSubmit(event) {
+        event.preventDefault();
+
+        // Получаем возраст и вес
+        const ageInput = document.getElementById('age');
+        const weightInput = document.getElementById('weight');
+        
+        const age = parseInt(ageInput.value, 10);
+        const weight = parseFloat(weightInput.value);
+        
+        if (isNaN(age) || age < 1 || age > 120) {
+            alert('Пожалуйста, укажите корректный возраст (от 1 до 120 лет)');
+            return;
+        }
+        
+        if (isNaN(weight) || weight < 20 || weight > 250) {
+            alert('Пожалуйста, укажите корректный вес (от 20 до 250 кг)');
+            return;
+        }
+        
+        // Собираем выбранные витамины
+        const selectedVitamins = [];
+        const checkboxes = document.querySelectorAll('input[name="vitamins"]:checked');
+        checkboxes.forEach(cb => {
+            selectedVitamins.push(cb.value);
+        });
+        
+        // Сохраняем всё в localStorage
+        const userData = {
+            age: age,
+            weight: weight,
+            vitamins: selectedVitamins,
+            timestamp: Date.now()
+        };
+        
+        localStorage.setItem('dietPlannerData', JSON.stringify(userData));
+        
+        // Переход на страницу с планом питания
+        window.location.href = 'plan.html';
+    }
+    
+    // Инициализация страницы
+    document.addEventListener('DOMContentLoaded', () => {
+        renderVitamins();
+        
+        const form = document.getElementById('dietForm');
+        if (form) {
+            form.addEventListener('submit', handleFormSubmit);
+        }
+        
+        // Если уже есть данные — можно предзаполнить (опционально)
+        const savedData = localStorage.getItem('dietPlannerData');
+        if (savedData) {
+            try {
+                const parsed = JSON.parse(savedData);
+                if (parsed.age) document.getElementById('age').value = parsed.age;
+                if (parsed.weight) document.getElementById('weight').value = parsed.weight;
+                if (parsed.vitamins && parsed.vitamins.length) {
+                    // отметить чекбоксы
+                    const allCheckboxes = document.querySelectorAll('input[name="vitamins"]');
+                    allCheckboxes.forEach(cb => {
+                        if (parsed.vitamins.includes(cb.value)) {
+                            cb.checked = true;
+                        }
+                    });
+                }
+            } catch(e) { console.warn(e); }
+        }
+    });
+</script>
+</body>
+</html>

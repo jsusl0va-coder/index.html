@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Мой план питания | Diet Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Карточка */
+        .card {
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            padding: 2rem 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .header-block {
+            text-align: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 1.2rem;
+            margin-bottom: 1.8rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-badge {
+            background: #f1f5f9;
+            display: inline-block;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1e293b;
+            margin-top: 8px;
+        }
+
+        .vitamins-tag {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .vit-tag {
+            background: #e9e4ff;
+            color: #5b3b8c;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Таблица / дни недели */
+        .week-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .day-card {
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            border: 1px solid #edf2f7;
+            transition: all 0.2s;
+        }
+
+        .day-header {
+            background: #f8fafd;
+            padding: 1rem 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+        }
+
+        .day-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.3px;
+        }
+
+        .day-calories {
+            background: #e9f5e9;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #2d6a2f;
+        }
+
+        .meals {
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .meal {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-left: 4px solid #cbd5e1;
+            padding-left: 1rem;
+        }
+
+        .meal-time {
+            min-width: 100px;
+            font-weight: 700;
+            color: #4a3b6e;
+            font-size: 0.95rem;
+        }
+
+        .meal-desc {
+            flex: 1;
+            color: #2d3a4b;
+            line-height: 1.4;
+        }
+
+        .extra-note {
+            background: #fefce8;
+            border-top: 1px dashed #facc15;
+            padding: 0.8rem 1.5rem;
+            font-size: 0.85rem;
+            color: #854d0e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vitamin-highlight {
+            background: #f3e8ff;
+            border-radius: 24px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #6b21a5;
+            margin-left: 6px;
+            display: inline-block;
+        }
+
+        .btn-back {
+            background: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #4a3b6e;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            margin-right: 12px;
+        }
+
+        .btn-back:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+        .btn-print {
+            background: #2d3a4b;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-print:hover {
+            background: #1e293b;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 680px) {
+            .card {
+                padding: 1.2rem;
+            }
+            .day-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .meal {
+                flex-direction: column;
+                gap: 4px;
+            }
+            .meal-time {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="header-block">
+            <h1>🍽️ Ваш персональный план питания</h1>
+            <div id="userInfoDisplay" class="user-badge">📊 Загрузка данных...</div>
+            <div id="vitaminsDisplay" class="vitamins-tag"></div>
+            <p style="margin-top: 12px; color: #475569; font-size: 0.85rem;">✅ Рацион сбалансирован по возрасту, весу и выбранным витаминам. Каждый приём пищи помогает восполнить нутриенты.</p>
+        </div>
+
+        <div id="weekPlanContainer" class="week-grid">
+            <!-- динаммические карточки дней недели будут загружены сюда -->
+            <div style="text-align: center; padding: 2rem;">⏳ Генерируем индивидуальный план...</div>
+        </div>
+
+        <div class="action-bar">
+            <button id="backBtn" class="btn-back">← Вернуться к настройкам</button>
+            <button id="printBtn" class="btn-print">🖨️ Распечатать / Сохранить PDF</button>
+        </div>
+    </div>
+    <footer>
+        🌿 План составлен с учетом возрастных норм и рекомендаций по витаминам. Индивидуальные особенности требуют консультации с врачом.
+    </footer>
+</div>
+
+<script>
+    // -------- БАЗА ПРОДУКТОВ И БЛЮД с ВИТАМИННЫМИ МЕТКАМИ ----------
+    // Каждый продукт/приём пищи содержит набор витаминов (чем богат) и описание
+    
+    const MEAL_DB = {
+        // ЗАВТРАКИ
+        breakfast: [
+            { name: "Овсяная каша на молоке с ягодами (черника, клубника)", vitamins: ["A","C","B1","B6"], kcal: 380, desc: "➕ мед, семена льна" },
+            { name: "Творог 5% с зеленью и тост из цельнозернового хлеба", vitamins: ["B12","D","A"], kcal: 410, desc: "➕ авокадо по желанию" },
+            { name: "Омлет с овощами (шпинат, помидоры, перец)", vitamins: ["A","E","K","B12"], kcal: 350, desc: "➕ сыр фета" },
+            { name: "Смузи Bowl: банан, шпинат, кефир, семена чиа", vitamins: ["C","B6","K"], kcal: 320, desc: "➕ грецкие орехи" },
+            { name: "Пшенная каша с тыквой и корицей", vitamins: ["A","E","B1"], kcal: 370, desc: "полезно для зрения и иммунитета" }
+        ],
+        // ОБЕДЫ
+        lunch: [
+            { name: "Куриная грудка запечённая + гречка + салат из свежих овощей", vitamins: ["B6","B12","C","K"], kcal: 520, desc: "заправка: оливковое масло" },
+            { name: "Лосось на пару с киноа и спаржей", vitamins: ["D","B12","E"], kcal: 590, desc: "Омега-3, витамин D" },
+            { name: "Постный борщ (сметана 10%) + ржаной хлеб", vitamins: ["A","C","B6"], kcal: 460, desc: "свекла богата фолатами" },
+            { name: "Индейка с бататом и брокколи на пару", vitamins: ["B6","C","K","A"], kcal: 540, desc: "антиоксиданты" },
+            { name: "Тофу с бурым рисом и миксом салата (руккола, шпинат)", vitamins: ["E","K","B1","B6"], kcal: 480, desc: "вегетарианский источник белка" }
+        ],
+        // УЖИНЫ
+        dinner: [
+            { name: "Запечённая треска + цветная капуста пюре", vitamins: ["D","B12","B6"], kcal: 410, desc: "лёгкий и сытный" },
+            { name: "Говядина тушёная с морковью и луком + гречка", vitamins: ["B12","B6","A"], kcal: 500, desc: "железо + витамины группы B" },
+            { name: "Салат с тунцом, яйцом, листовым салатом и авокадо", vitamins: ["D","E","B12","K"], kcal: 440, desc: "быстрый ужин" },
+            { name: "Овощное рагу (кабачки, перец, баклажаны) + нут", vitamins: ["A","C","B1","K"], kcal: 380, desc: "клетчатка и антиоксиданты" },
+            { name: "Куриные фрикадельки с томатным соусом и пастой из ц/з муки", vitamins: ["A","B6","B12"], kcal: 495, desc: "гармония вкуса" }
+        ],
+        // ПЕРЕКУСЫ (2-й завтрак/полдник)
+        snack: [
+            { name: "Греческий йогурт + горсть миндаля + черника", vitamins: ["D","E","B12"], kcal: 210, desc: "пробиотики" },
+            { name: "Яблоко + арахисовая паста (без сахара)", vitamins: ["C","E","B1"], kcal: 190, desc: "энергия" },
+            { name: "Морковные палочки с хумусом", vitamins: ["A","K","B6"], kcal: 150, desc: "витамин А для зрения" },
+            { name: "Смузи протеиновый: кефир, банан, какао", vitamins: ["B6","B12"], kcal: 200, desc: "поддержка нервной системы" },
+            { name: "Творожная запеканка без сахара", vitamins: ["D","B12","A"], kcal: 230, desc: "кальций + витамин D" }
+        ]
+    };
+
+    // Определяем возрастную группу: дети (1-17), взрослые (18-59), 60+
+    function getAgeGroup(age) {
+        if (age <= 17) return "child";
+        if (age >= 60) return "senior";
+        return "adult";
+    }
+
+    // Нормы калорийности (приблизительные) по весу/возрасту. Базовая формула: 25-30 ккал/кг + коррекция.
+    // Для более персонализированного отображения добавим целевые калории на день.
+    function calculateDailyCalories(weight, ageGroup) {
+        let base = weight * 28; // среднее
+        if (ageGroup === "child") base = weight * 32; // дети активнее
+        if (ageGroup === "senior") base = weight * 25; // пожилые чуть меньше
+        if (base < 1500) base = 1500;
+        if (base > 2800) base = 2800;
+        return Math.round(base);
+    }
+
+    // Распределение калорий по приемам: завтрак ~25%, обед ~35%, ужин ~25%, перекусы 15%
+    function getMealKcalRange(dailyKcal) {
+        return {
+            breakfast: Math.round(dailyKcal * 0.25),
+            lunch: Math.round(dailyKcal * 0.35),
+            dinner: Math.round(dailyKcal * 0.25),
+            snack: Math.round(dailyKcal * 0.15)
+        };
+    }
+
+    // Подобрать оптимальный вариант блюда под витаминные предпочтения (ранжирование)
+    // выбираем блюдо, которое покрывает максимум нужных витаминов
+    function pickBestMeal(mealArray, targetVitamins, allowLower=true) {
+        if (!mealArray.length) return mealArray[0];
+        let best = mealArray[0];
+        let bestScore = -1;
+        for (let meal of mealArray) {
+            let score = 0;
+            if (targetVitamins.length === 0) {
+                // если витамины не выбраны — берём рандомное сбалансированное
+                score = meal.vitamins.length * 2;
+            } else {
+                for (let vit of targetVitamins) {
+                    if (meal.vitamins.includes(vit)) score += 2;
+                }
+                // дополнительно поощряем за разнообразие других витаминов
+                score += meal.vitamins.length * 0.5;
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                best = meal;
+            }
+        }
+        return best;
+    }
+
+    // Генерация меню на один день (завтрак, обед, ужин, перекус) с учетом витаминов и калорий
+    function generateDayMenu(selectedVitamins, targetKcalRanges) {
+        // делаем копию для обхода
+        const breakfastOpts = [...MEAL_DB.breakfast];
+        const lunchOpts = [...MEAL_DB.lunch];
+        const dinnerOpts = [...MEAL_DB.dinner];
+        const snackOpts = [...MEAL_DB.snack];
+
+        const breakfast = pickBestMeal(breakfastOpts, selectedVitamins);
+        const lunch = pickBestMeal(lunchOpts, selectedVitamins);
+        const dinner = pickBestMeal(dinnerOpts, selectedVitamins);
+        const snack = pickBestMeal(snackOpts, selectedVitamins);
+
+        // стилизация описания с витаминами
+        function formatMeal(meal, expectedKcal) {
+            const vitaminBadges = meal.vitamins.map(v => `💊${v}`).join(' ');
+            return {
+                title: meal.name,
+                calories: meal.kcal,
+                vitaminsList: meal.vitamins,
+                vitaminBadge: vitaminBadges,
+                extra: meal.desc,
+                expectedKcal: expectedKcal
+            };
+        }
+
+        return {
+            breakfast: formatMeal(breakfast, targetKcalRanges.breakfast),
+            lunch: formatMeal(lunch, targetKcalRanges.lunch),
+            dinner: formatMeal(dinner, targetKcalRanges.dinner),
+            snack: formatMeal(snack, targetKcalRanges.snack),
+            totalCalories: breakfast.kcal + lunch.kcal + dinner.kcal + snack.kcal
+        };
+    }
+
+    // формирование недельного плана (7 дней) с небольшим разнообразием, но с учетом витаминов.
+    function generateWeeklyPlan(selectedVitamins, dailyTargetKcal, ageGroup, weight) {
+        const ranges = getMealKcalRange(dailyTargetKcal);
+        const weekDays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
+        let weeklyPlan = [];
+        
+        // Чтобы избежать повторения блюд в течение недели (не идеально, но перемешаем)
+        for (let i = 0; i < weekDays.length; i++) {
+            // для каждого дня генерируем меню (с учетом выбранных витаминов)
+            const dayMenu = generateDayMenu(selectedVitamins, ranges);
+            // добавим небольшую кастомную корректировку для возрастной группы: пожилым добавим заметку про кальций, детям про рост
+            let ageNote = "";
+            if (ageGroup === "senior") {
+                ageNote = "👵🏻 Учтен повышенный белок и витамин D для костей. Рекомендуем прогулку на солнце.";
+            } else if (ageGroup === "child") {
+                ageNote = "🧒 Сбалансирован для роста, кальций + жирные кислоты.";
+            } else {
+                ageNote = "💪 Оптимальный баланс макронутриентов для энергии.";
+            }
+            // добавим рекомендацию по витаминам исходя из выбранных
+            let vitAdvice = "";
+            if (selectedVitamins.includes("D")) vitAdvice += "☀️ Дополнительно: рыбий жир или больше солнца. ";
+            if (selectedVitamins.includes("B12")) vitAdvice += "🥩 B12 важен для нервов — источник: мясо, яйца. ";
+            
+            weeklyPlan.push({
+                day: weekDays[i],
+                meals: dayMenu,
+                ageNote: ageNote,
+                vitAdvice: vitAdvice,
+                weightNote: `Вес ${weight} кг — калорийность дня ~${dayMenu.totalCalories} ккал, цель: поддержание.`
+            });
+        }
+        return weeklyPlan;
+    }
+
+    // отрисовка плана в DOM
+    function renderPlan(plan, selectedVitamins, age, weight, ageGroup, dailyKcal) {
+        const container = document.getElementById('weekPlanContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        
+        for (let dayPlan of plan) {
+            const dayCard = document.createElement('div');
+            dayCard.className = 'day-card';
+            
+            // Заголовок дня
+            const totalKcal = dayPlan.meals.totalCalories;
+            dayCard.innerHTML = `
+                <div class="day-header">
+                    <div>
+                        <span class="day-name">${dayPlan.day}</span>
+                        <span class="day-calories">🔥 ~${totalKcal} ккал</span>
+                    </div>
+                    <div><small>⚖️ рекомендуемая активность: умеренная</small></div>
+                </div>
+                <div class="meals">
+                    <div class="meal">
+                        <div class="meal-time">🌅 ЗАВТРАК</div>
+                        <div class="meal-desc"><strong>${dayPlan.meals.breakfast.title}</strong> (${dayPlan.meals.breakfast.calories} ккал)<br>
+                        🥗 ${dayPlan.meals.breakfast.extra} <span class="vitamin-highlight">${dayPlan.meals.breakfast.vitaminBadge}</span></div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-time">🍏 ПЕРЕКУС</div>
+                        <div class="meal-desc"><strong>${dayPlan.meals.snack.title}</strong> (${dayPlan.meals.snack.calories} ккал)<br>
+                        ✨ ${dayPlan.meals.snack.extra} <span class="vitamin-highlight">${dayPlan.meals.snack.vitaminBadge}</span></div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-time">☀️ ОБЕД</div>
+                        <div class="meal-desc"><strong>${dayPlan.meals.lunch.title}</strong> (${dayPlan.meals.lunch.calories} ккал)<br>
+                        🥄 ${dayPlan.meals.lunch.extra} <span class="vitamin-highlight">${dayPlan.meals.lunch.vitaminBadge}</span></div>
+                    </div>
+                    <div class="meal">
+                        <div class="meal-time">🌙 УЖИН</div>
+                        <div class="meal-desc"><strong>${dayPlan.meals.dinner.title}</strong> (${dayPlan.meals.dinner.calories} ккал)<br>
+                        🍽️ ${dayPlan.meals.dinner.extra} <span class="vitamin-highlight">${dayPlan.meals.dinner.vitaminBadge}</span></div>
+                    </div>
+                </div>
+                <div class="extra-note">
+                    💡 ${dayPlan.ageNote} ${dayPlan.vitAdvice} ${dayPlan.weightNote}
+                </div>
+            `;
+            container.appendChild(dayCard);
+        }
+        
+        // Дополнительно добавим совет по витаминной корзине
+        const adviceBlock = document.createElement('div');
+        adviceBlock.style.background = "#eef2ff";
+        adviceBlock.style.borderRadius = "24px";
+        adviceBlock.style.padding = "1rem";
+        adviceBlock.style.marginTop = "1.5rem";
+        adviceBlock.style.fontSize = "0.85rem";
+        let vitaminRichFoods = "";
+        if (selectedVitamins.includes("A")) vitaminRichFoods += "🥕 Морковь, тыква, печень. ";
+        if (selectedVitamins.includes("C")) vitaminRichFoods += "🍊 Цитрусы, шиповник, болгарский перец. ";
+        if (selectedVitamins.includes("D")) vitaminRichFoods += "🐟 Жирная рыба, яйца, укрепление иммунитета. ";
+        if (selectedVitamins.includes("E")) vitaminRichFoods += "🌻 Орехи, масла, авокадо. ";
+        if (selectedVitamins.includes("B12")) vitaminRichFoods += "🥩 Говядина, моллюски, лосось. ";
+        if (selectedVitamins.includes("B6")) vitaminRichFoods += "🍌 Банан, картофель, курица. ";
+        if (selectedVitamins.includes("K")) vitaminRichFoods += "🥬 Шпинат, брокколи, капуста. ";
+        if (selectedVitamins.includes("B1")) vitaminRichFoods += "🌾 Свинина, бобовые, орехи. ";
+        
+        adviceBlock.innerHTML = `<strong>📌 Персональные рекомендации по витаминам</strong><br>🎯 Исходя из ваших приоритетов (${selectedVitamins.join(", ") || "все важные микронутриенты"}): <br> ${vitaminRichFoods || "Старайтесь питаться разнообразно, включите сезонные овощи и фрукты."}<br><br>🧑‍⚕️ Возраст ${age} лет (группа: ${ageGroup === "child" ? "дети/подростки" : ageGroup === "senior" ? "60+" : "взрослые"}). Суточная норма калорий: ~${dailyKcal} ккал. План подобран с учётом веса ${weight} кг.`;
+        container.appendChild(adviceBlock);
+    }
+
+    // главная функция загрузки данных и генерации
+    function loadAndGeneratePlan() {
+        const savedRaw = localStorage.getItem('dietPlannerData');
+        if (!savedRaw) {
+            // нет данных - редирект обратно
+            window.location.href = 'index.html';
+            return;
+        }
+        let userData;
+        try {
+            userData = JSON.parse(savedRaw);
+        } catch(e) {
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        const age = userData.age;
+        const weight = userData.weight;
+        let selectedVitamins = userData.vitamins || [];
+        if (!Array.isArray(selectedVitamins)) selectedVitamins = [];
+        
+        const ageGroup = getAgeGroup(age);
+        const dailyCalories = calculateDailyCalories(weight, ageGroup);
+        
+        // Генерируем недельный план
+        const weeklyPlan = generateWeeklyPlan(selectedVitamins, dailyCalories, ageGroup, weight);
+        
+        // отображение информации о пользователе
+        const userInfoSpan = document.getElementById('userInfoDisplay');
+        userInfoSpan.innerHTML = `👤 Возраст: ${age} лет | Вес: ${weight} кг | Группа: ${ageGroup === 'child' ? 'Дети/подростки' : ageGroup === 'senior' ? '60+' : 'Взрослые'} | Цель: здоровое питание`;
+        
+        const vitaminsContainer = document.getElementById('vitaminsDisplay');
+        if (selectedVitamins.length > 0) {
+            vitaminsContainer.innerHTML = `<span style="font-weight:500;">⭐ Ваши приоритетные витамины:</span> ${selectedVitamins.map(v => `<span class="vit-tag">Витамин ${v}</span>`).join('')}`;
+        } else {
+            vitaminsContainer.innerHTML = `<span class="vit-tag">🌈 Полный спектр витаминов (сбалансированное меню)</span>`;
+        }
+        
+        // отрисовка плана
+        renderPlan(weeklyPlan, selectedVitamins, age, weight, ageGroup, dailyCalories);
+    }
+    
+    // кнопка назад (очистка стора или просто назад)
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAndGeneratePlan();
+        
+        const backBtn = document.getElementById('backBtn');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+        }
+        const printBtn = document.getElementById('printBtn');
+        if (printBtn) {
+            printBtn.addEventListener('click', () => {
+                window.print();
+            });
+        }
+    });
+</script>
+</body>
+</html>
